@@ -19,11 +19,31 @@ agentesDelGobierno = [("Jack Bauer","24"),
 
 
 --------Eventos------------
-type Vigilante = (String,[String],Int)
+type Vigilante = (String,[String],Int)--como es de mas de dos elementos no puedo hacer fst y snd
+type Agente = (String,String)
+type Evento = [Vigilante]->[Vigilante]
 
-destruccionDeNiuShork :: [Vigilante]->[Vigilante]
+tomoElPrimero :: Vigilante->String
+tomoElPrimero (nombre,_,_) = nombre
+
+destruccionDeNiuShork :: Evento
 destruccionDeNiuShork = filter (not.sacoVigilante "Rorschach").filter (not.sacoVigilante "Dr.manhattan")
 
 sacoVigilante :: String->Vigilante->Bool
-sacoVigilante vigilanteASacar (nombre,habilidades,anio) = nombre == vigilanteASacar
+sacoVigilante vigilanteASacar (nombre,_,_) =  nombre == vigilanteASacar
 
+muerteDeUnVigilante :: String->Evento
+muerteDeUnVigilante nombre = filter (sacoVigilante nombre)
+
+guerraDeVietnam :: Evento
+guerraDeVietnam  = map (agregarHabilidad "cinismo").esAgenteDelGobierno 
+
+agregarHabilidad :: String->Vigilante->Vigilante
+agregarHabilidad habilidad (nombre, habilidades, anio) = (nombre,habilidad:habilidades,anio)
+-- no le hago ++ pq eso es solo para concatenar 2 listas. : lo agrega siempre al comienzo
+ 
+esAgenteDelGobierno :: [Vigilante]->[Vigilante]
+esAgenteDelGobierno vigilantes = filter (estaEn agentesDelGobierno) vigilantes
+
+estaEn :: [Agente]->Vigilante->Bool
+estaEn agentes (nombre,_,_)= any (==nombre) (map fst agentes)
